@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var logger = log.New(os.Stderr, "", 0)
@@ -18,20 +19,18 @@ func main() {
 	}
 
 	filename := flag.Arg(0)
-	ext := filepath.Ext(filename)
-	switch ext {
-	case ".zip":
+
+	switch {
+	case strings.HasSuffix(filename, ".zip"):
 		unpackZip(filename)
-	case "":
-		logger.Fatalf("no file extension in filename %s", filename)
 	default:
-		logger.Fatalf("unknown file extension %s in file %s", ext, filename)
+		logger.Fatalf("unknown file extension")
 	}
 }
 
 func unpackZip(filename string) {
-	dstDir := filename[:len(filename)-4] // remove '.zip'
-	dstDir = filepath.Base(dstDir)       // unpack it to the current directory
+	dstDir := strings.TrimSuffix(filename, ".zip") // remove '.zip'
+	dstDir = filepath.Base(dstDir)                 // unpack it to the current directory
 
 	if file, err := os.OpenFile(dstDir, os.O_RDONLY, 0); err == nil {
 		file.Close()
