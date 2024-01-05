@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 
+	"github.com/bodgit/sevenzip"
 	"github.com/nlepage/go-tarfs"
 	"github.com/ulikunitz/xz"
 )
@@ -20,6 +21,7 @@ var Archives = []Archive{
 	{".tar.gz", tarGzFs},
 	{".tar.xz", tarXzFs},
 	{".zip", zipFs},
+	{".7z", sevenZipFs},
 }
 
 func tarFs(src *os.File) (fs.FS, error) {
@@ -48,4 +50,12 @@ func zipFs(src *os.File) (fs.FS, error) {
 		return nil, err
 	}
 	return zip.NewReader(src, info.Size())
+}
+
+func sevenZipFs(src *os.File) (fs.FS, error) {
+	info, err := src.Stat()
+	if err != nil {
+		return nil, err
+	}
+	return sevenzip.NewReader(src, info.Size())
 }
