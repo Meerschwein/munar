@@ -1,0 +1,11 @@
+#! /usr/bin/env sh
+
+# linting
+go vet ./...
+staticcheck ./...
+
+# formatting
+gofumpt -w --extra ./
+
+# other stuff
+go mod tidy

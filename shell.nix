@@ -3,13 +3,10 @@ let
 in
   pkgs.mkShell {
     packages = with pkgs; [
-      go
-
       delve
+      go
       go-tools
       gofumpt
       gopls
-
-      just
     ];
   }
