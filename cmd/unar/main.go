@@ -1,7 +1,9 @@
 package main
 
 import (
+	"archive/tar"
 	"archive/zip"
+	"compress/gzip"
 	"flag"
 	"fmt"
 	"io"
@@ -21,8 +23,76 @@ func main() {
 	switch {
 	case strings.HasSuffix(filename, ".zip"):
 		unpackZip(filename)
+	case strings.HasSuffix(filename, ".tar.gz"):
+		unpackTarGz(filename)
 	default:
 		fatalf("unknown file extension")
+	}
+}
+
+func unpackTarGz(filename string) {
+	dstDir := strings.TrimSuffix(filename, ".tar.gz") // remove '.tar.gz'
+	dstDir = filepath.Base(dstDir)                    // unpack it to the current directory
+
+	if _, err := os.OpenFile(dstDir, os.O_RDONLY, 0); err == nil {
+		fatalf("directory %s already exists", dstDir)
+	}
+
+	file, err := os.Open(filename)
+	if err != nil {
+		fatalf("failed to open file %s: %v", filename, err)
+	}
+	defer file.Close()
+
+	gzipReader, err := gzip.NewReader(file)
+	if err != nil {
+		fatalf("failed to create gzip reader: %v", err)
+	}
+	defer gzipReader.Close()
+
+	tarReader := tar.NewReader(gzipReader)
+
+	// skip pax header
+	_, err = tarReader.Next()
+	if err != nil {
+		fatalf("failed to read tar header: %v", err)
+	}
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			fatalf("failed to read tar header: %v", err)
+		}
+
+		fmt.Printf("unpacking %s", header.Name)
+
+		dstFilename := filepath.Join(dstDir, header.Name)
+
+		if header.Typeflag == tar.TypeDir {
+			if err := os.MkdirAll(dstFilename, 0o755); err != nil {
+				fatalf("failed to create directory %s: %v", dstFilename, err)
+			}
+		} else {
+			dstParentDir := filepath.Dir(dstFilename)
+
+			if err := os.MkdirAll(dstParentDir, 0o755); err != nil {
+				fatalf("failed to create directory %s: %v", dstParentDir, err)
+			}
+
+			dstFile, err := os.OpenFile(dstFilename, os.O_CREATE|os.O_WRONLY, 0o644)
+			if err != nil {
+				fatalf("failed to create file %s: %v", dstFilename, err)
+			}
+
+			_, err = io.Copy(dstFile, tarReader)
+			if err != nil {
+				fatalf("failed to write to %s: %v", dstFilename, err)
+			}
+
+			dstFile.Close()
+		}
 	}
 }
 
