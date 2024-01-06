@@ -8,5 +8,6 @@ in
       go-tools
       gofumpt
       gopls
+      govulncheck
     ];
   }

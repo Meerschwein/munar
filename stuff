@@ -9,3 +9,4 @@ gofumpt -w --extra ./
 
 # other stuff
 go mod tidy
+govulncheck ./...
