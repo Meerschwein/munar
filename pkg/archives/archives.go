@@ -17,11 +17,12 @@ type Archive struct {
 }
 
 var Archives = []Archive{
-	{".tar", tarFs},
+	{".7z", sevenZipFs},
+	{".epub", zipFs},
 	{".tar.gz", tarGzFs},
 	{".tar.xz", tarXzFs},
+	{".tar", tarFs},
 	{".zip", zipFs},
-	{".7z", sevenZipFs},
 }
 
 func tarFs(src *os.File) (fs.FS, error) {
