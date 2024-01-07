@@ -1,12 +1,12 @@
 package archives
 
 import (
-	"archive/zip"
-	"compress/gzip"
 	"io/fs"
 	"os"
 
 	"github.com/bodgit/sevenzip"
+	"github.com/klauspost/compress/gzip"
+	"github.com/klauspost/compress/zip"
 	"github.com/nlepage/go-tarfs"
 	"github.com/ulikunitz/xz"
 )
