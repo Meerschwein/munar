@@ -20,11 +20,12 @@ func CheckDestinationDir(dstDir string) {
 	file, err := os.OpenFile(dstDir, os.O_RDONLY, 0)
 	if err == nil {
 		file.Close()
-		log.Fatalf("directory %s already exists", dstDir)
+		log.Fatal("directory ", dstDir, " already exists")
 	}
 }
 
-// shamelessly stolen from https://github.com/golang/go/issues/62484
+// CopyFS copies all contents of fsys into dir
+// https://github.com/golang/go/issues/62484
 func CopyFS(dir string, fsys fs.FS) error {
 	return fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, _err error) error {
 		targ := filepath.Join(dir, filepath.FromSlash(path))
