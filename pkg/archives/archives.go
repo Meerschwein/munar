@@ -11,18 +11,24 @@ import (
 	"github.com/ulikunitz/xz"
 )
 
-type Archive struct {
-	Suffix string
-	ToFs   func(src *os.File) (fs.FS, error)
+type ArchiveFsFn func(src *os.File) (fs.FS, error)
+
+var SuffixArchives = map[string]ArchiveFsFn{
+	".7z":     sevenZipFs,
+	".epub":   zipFs,
+	".odt":    zipFs,
+	".tar.gz": tarGzFs,
+	".tar.xz": tarXzFs,
+	".tar":    tarFs,
+	".zip":    zipFs,
 }
 
-var Archives = []Archive{
-	{".7z", sevenZipFs},
-	{".epub", zipFs},
-	{".tar.gz", tarGzFs},
-	{".tar.xz", tarXzFs},
-	{".tar", tarFs},
-	{".zip", zipFs},
+var FormatArchives = map[string]ArchiveFsFn{
+	"7zip":  sevenZipFs,
+	"tar":   tarFs,
+	"targz": tarGzFs,
+	"tarxz": tarXzFs,
+	"zip":   zipFs,
 }
 
 func tarFs(src *os.File) (fs.FS, error) {

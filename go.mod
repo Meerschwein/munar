@@ -17,5 +17,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.19 // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect
+	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc
 	golang.org/x/text v0.14.0 // indirect
 )
