@@ -14,6 +14,7 @@ import (
 	"golang.org/x/tools/txtar"
 )
 
+// The file is already open
 type ArchiveFsFn func(src *os.File) (fs.FS, error)
 
 var SuffixArchives = map[string]ArchiveFsFn{
