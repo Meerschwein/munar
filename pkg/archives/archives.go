@@ -21,6 +21,7 @@ var SuffixArchives = map[string]ArchiveFsFn{
 	".tar.xz": tarXzFs,
 	".tar":    tarFs,
 	".tgz":    tarGzFs,
+	".xpi":    zipFs,
 	".zip":    zipFs,
 }
 
