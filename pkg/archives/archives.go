@@ -1,14 +1,17 @@
 package archives
 
 import (
+	"io"
 	"io/fs"
 	"os"
 
 	"github.com/bodgit/sevenzip"
+	"github.com/josharian/txtarfs"
 	"github.com/klauspost/compress/gzip"
 	"github.com/klauspost/compress/zip"
 	"github.com/nlepage/go-tarfs"
 	"github.com/ulikunitz/xz"
+	"golang.org/x/tools/txtar"
 )
 
 type ArchiveFsFn func(src *os.File) (fs.FS, error)
@@ -21,6 +24,7 @@ var SuffixArchives = map[string]ArchiveFsFn{
 	".tar.xz": tarXzFs,
 	".tar":    tarFs,
 	".tgz":    tarGzFs,
+	".txtar":  txtarFs,
 	".xpi":    zipFs,
 	".zip":    zipFs,
 }
@@ -30,6 +34,7 @@ var FormatArchives = map[string]ArchiveFsFn{
 	"tar":   tarFs,
 	"targz": tarGzFs,
 	"tarxz": tarXzFs,
+	"txtar": txtarFs,
 	"zip":   zipFs,
 }
 
@@ -67,4 +72,12 @@ func sevenZipFs(src *os.File) (fs.FS, error) {
 		return nil, err
 	}
 	return sevenzip.NewReader(src, info.Size())
+}
+
+func txtarFs(src *os.File) (fs.FS, error) {
+	content, err := io.ReadAll(src)
+	if err != nil {
+		return nil, err
+	}
+	return txtarfs.As(txtar.Parse(content)), nil
 }
