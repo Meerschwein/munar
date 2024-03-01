@@ -67,7 +67,7 @@ func main() {
 	found:
 	}
 
-	_, err := os.OpenFile(dstPath, os.O_RDONLY, 0)
+	_, err := os.Open(dstPath)
 	if err == nil {
 		log.Fatal(`directory "`, dstPath, `" already exists`)
 	}
