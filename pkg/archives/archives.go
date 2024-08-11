@@ -9,6 +9,7 @@ import (
 	"github.com/josharian/txtarfs"
 	"github.com/klauspost/compress/gzip"
 	"github.com/klauspost/compress/zip"
+	"github.com/meerschwein/unar/pkg/rarfs"
 	"github.com/nlepage/go-tarfs"
 	"github.com/ulikunitz/xz"
 	"golang.org/x/tools/txtar"
@@ -21,6 +22,7 @@ var SuffixArchives = map[string]ArchiveFsFn{
 	".7z":     sevenZipFs,
 	".epub":   zipFs,
 	".odt":    zipFs,
+	".rar":    rarFs,
 	".tar.gz": tarGzFs,
 	".tar.xz": tarXzFs,
 	".tar":    tarFs,
@@ -32,6 +34,7 @@ var SuffixArchives = map[string]ArchiveFsFn{
 
 var FormatArchives = map[string]ArchiveFsFn{
 	"7zip":  sevenZipFs,
+	"rar":   rarFs,
 	"tar":   tarFs,
 	"targz": tarGzFs,
 	"tarxz": tarXzFs,
@@ -81,4 +84,8 @@ func txtarFs(src *os.File) (fs.FS, error) {
 		return nil, err
 	}
 	return txtarfs.As(txtar.Parse(content)), nil
+}
+
+func rarFs(src *os.File) (fs.FS, error) {
+	return rarfs.New(src)
 }

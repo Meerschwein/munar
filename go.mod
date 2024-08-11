@@ -7,6 +7,8 @@ require (
 	github.com/josharian/txtarfs v0.0.0-20210615234325-77aca6df5bca
 	github.com/klauspost/compress v1.17.4
 	github.com/nlepage/go-tarfs v1.2.1
+	github.com/nwaples/rardecode v1.1.3
+	github.com/psanford/memfs v0.0.0-20230130182539-4dbf7e3e865e
 	github.com/ulikunitz/xz v0.5.11
 	golang.org/x/tools v0.16.0
 )
