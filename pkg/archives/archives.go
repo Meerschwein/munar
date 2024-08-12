@@ -3,7 +3,6 @@ package archives
 import (
 	"io"
 	"io/fs"
-	"os"
 
 	"github.com/bodgit/sevenzip"
 	"github.com/josharian/txtarfs"
@@ -15,8 +14,12 @@ import (
 	"golang.org/x/tools/txtar"
 )
 
-// The file is already open
-type ArchiveFsFn func(src *os.File) (fs.FS, error)
+type Reader interface {
+	io.Reader
+	io.ReaderAt
+}
+
+type ArchiveFsFn func(r Reader, size int64) (fs.FS, error)
 
 var SuffixArchives = map[string]ArchiveFsFn{
 	".7z":     sevenZipFs,
@@ -42,50 +45,42 @@ var FormatArchives = map[string]ArchiveFsFn{
 	"zip":   zipFs,
 }
 
-func tarFs(src *os.File) (fs.FS, error) {
-	return tarfs.New(src)
+func tarFs(r Reader, _ int64) (fs.FS, error) {
+	return tarfs.New(r)
 }
 
-func tarGzFs(src *os.File) (fs.FS, error) {
-	gzipReader, err := gzip.NewReader(src)
+func tarGzFs(r Reader, _ int64) (fs.FS, error) {
+	gzipReader, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, err
 	}
 	return tarfs.New(gzipReader)
 }
 
-func tarXzFs(src *os.File) (fs.FS, error) {
-	xzReader, err := xz.NewReader(src)
+func tarXzFs(r Reader, _ int64) (fs.FS, error) {
+	xzReader, err := xz.NewReader(r)
 	if err != nil {
 		return nil, err
 	}
 	return tarfs.New(xzReader)
 }
 
-func zipFs(src *os.File) (fs.FS, error) {
-	info, err := src.Stat()
-	if err != nil {
-		return nil, err
-	}
-	return zip.NewReader(src, info.Size())
+func zipFs(r Reader, size int64) (fs.FS, error) {
+	return zip.NewReader(r, size)
 }
 
-func sevenZipFs(src *os.File) (fs.FS, error) {
-	info, err := src.Stat()
-	if err != nil {
-		return nil, err
-	}
-	return sevenzip.NewReader(src, info.Size())
+func sevenZipFs(r Reader, size int64) (fs.FS, error) {
+	return sevenzip.NewReader(r, size)
 }
 
-func txtarFs(src *os.File) (fs.FS, error) {
-	content, err := io.ReadAll(src)
+func txtarFs(r Reader, _ int64) (fs.FS, error) {
+	content, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 	return txtarfs.As(txtar.Parse(content)), nil
 }
 
-func rarFs(src *os.File) (fs.FS, error) {
-	return rarfs.New(src)
+func rarFs(r Reader, _ int64) (fs.FS, error) {
+	return rarfs.New(r)
 }

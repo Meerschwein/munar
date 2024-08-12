@@ -78,7 +78,12 @@ func main() {
 	}
 	defer file.Close()
 
-	fs, err := archFsFn(file)
+	info, err := file.Stat()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fs, err := archFsFn(file, info.Size())
 	if err != nil {
 		log.Fatal(err)
 	}
