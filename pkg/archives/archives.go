@@ -8,7 +8,7 @@ import (
 	"github.com/josharian/txtarfs"
 	"github.com/klauspost/compress/gzip"
 	"github.com/klauspost/compress/zip"
-	"github.com/meerschwein/unar/pkg/rarfs"
+	"github.com/meerschwein/unar/internal/rarfs"
 	"github.com/nlepage/go-tarfs"
 	"github.com/ulikunitz/xz"
 	"golang.org/x/tools/txtar"

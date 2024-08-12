@@ -8,8 +8,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/meerschwein/unar/internal/util"
 	"github.com/meerschwein/unar/pkg/archives"
-	"github.com/meerschwein/unar/pkg/util"
 	"golang.org/x/exp/maps"
 )
 
